@@ -9,3 +9,9 @@ vsc-extension-quickstart.md
 tslint.json
 **/*.ts
 .github
+blogs/**
+node_modules/**
+!node_modules/**/*.js*
+!node_modules/clipboard-data/**/*.node
+!node_modules/clipboard-data/**/*.lib
+!node_modules/clipboard-data/**/*.js*

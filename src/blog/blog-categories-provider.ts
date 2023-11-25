@@ -1,61 +1,69 @@
-import * as vscode from 'vscode';
-import { blogOperate } from './blog-operate';
-import { CategoryInfoStruct } from '../rpc/rpc-package';
-import { blogConfig } from './blog-config';
+import * as vscode from "vscode";
+import { blogOperate } from "./blog-operate";
+import { CategoryInfoStruct } from "../rpc/rpc-package";
+import { BlogConfig } from "./blog-config";
 
-export class BlogCategoriesProvider implements vscode.TreeDataProvider<vscode.TreeItem>{
+export class BlogCategoriesProvider
+  implements vscode.TreeDataProvider<vscode.TreeItem>
+{
+  private _onDidChangeTreeData: vscode.EventEmitter<any> =
+    new vscode.EventEmitter<any>();
+  readonly onDidChangeTreeData: vscode.Event<any> =
+    this._onDidChangeTreeData.event;
 
-    private _onDidChangeTreeData: vscode.EventEmitter<any> = new vscode.EventEmitter<any>();
-    readonly onDidChangeTreeData: vscode.Event<any> = this._onDidChangeTreeData.event;
+  private categories: Array<CategoryInfoStruct> | undefined;
 
-    private categories: Array<CategoryInfoStruct> | undefined;
-
-    public async getCategories(): Promise<string[]> {
-        if (!this.categories) {
-            this.categories = await blogOperate.getCategories();
-        }
-
-        return this.categories.map(c => c.title);
+  public async getCategories(): Promise<string[]> {
+    if (!this.categories) {
+      this.categories = await blogOperate.getCategories();
     }
 
-    public async refresh(): Promise<any> {
-        try {
-            this.categories = await blogOperate.getCategories();
-            this._onDidChangeTreeData.fire(undefined);
-        } catch (error) {
-            vscode.window.showErrorMessage((error as Error).message);
-        }
+    return this.categories.map((c) => c.title);
+  }
+
+  public async refresh(): Promise<any> {
+    try {
+      this.categories = await blogOperate.getCategories();
+      this._onDidChangeTreeData.fire(undefined);
+    } catch (error) {
+      vscode.window.showErrorMessage((error as Error).message);
+    }
+  }
+
+  getTreeItem(
+    element: vscode.TreeItem
+  ): vscode.TreeItem | Thenable<vscode.TreeItem> {
+    return element;
+  }
+
+  getChildren(
+    element?: vscode.TreeItem | undefined
+  ): vscode.ProviderResult<vscode.TreeItem[]> {
+    if (!BlogConfig.instance.blogId) {
+      return [
+        {
+          label: "配置用户信息",
+          command: {
+            command: "writeCnblog.setConfig",
+            title: "配置用户信息",
+          },
+        } as vscode.TreeItem,
+      ];
     }
 
-    getTreeItem(element: vscode.TreeItem): vscode.TreeItem | Thenable<vscode.TreeItem> {
-        return element;
+    if (this.categories) {
+      return this.categories.map((c) => {
+        return {
+          id: c.categoryid,
+          label: c.title,
+          description: c.categoryid,
+        };
+      });
+    } else {
+      this.refresh();
     }
-
-    getChildren(element?: vscode.TreeItem | undefined): vscode.ProviderResult<vscode.TreeItem[]> {
-        if (!blogConfig.blogId) {
-            return [{
-                label: "配置用户信息",
-                command: {
-                    command: 'writeCnblog.setConfig',
-                    title: "配置用户信息"
-                }
-            } as vscode.TreeItem];
-        }
-
-        if (this.categories) {
-            return this.categories.map(c => {
-                return {
-                    id: c.categoryid,
-                    label: c.title,
-                    description: c.categoryid
-                };
-            });
-        } else {
-            this.refresh();
-        }
-        return [];
-
-    }
+    return [];
+  }
 }
 
 export const blogCategoriesProvider = new BlogCategoriesProvider();
