@@ -132,7 +132,9 @@ export class PostImageReplace {
       );
       let remoteUrl = url;
       if (!url.toLocaleLowerCase().includes(host.toLocaleLowerCase())) {
-        remoteUrl = `${host}${url}`;
+        if (!url.toLocaleLowerCase().startsWith("http")) {
+          remoteUrl = `${host}${url}`;
+        }
       }
       request
         .get(remoteUrl)
