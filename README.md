@@ -1,11 +1,6 @@
 # WriteCnblog README
 
-
-官方出了自己的插件地址 https://github.com/cnblogs/vscode-cnb
-
-博客园的协议也有做了点改变，导致这个插件不兼容了。这个插件`不维护了`
-
-"WriteCnblog" 是一个基于rpcxml协议给[博客园](http://www.cnblogs.com/)发布Markdown格式的插件
+这是一个基于rpcxml协议给[yao-amis-admin](https://github.com/wwsheng009/yao-amis-admin)发布Markdown格式的插件。
 
 ![](resources/home.JPG)
 
@@ -26,6 +21,26 @@
 ## Requirements
 
 需要vs code版本在1.31.0以上。
+
+
+## 打包插件
+
+如果出错需要删除目录node_modules
+```sh
+npm add -g esbuild
+
+npm i
+
+npm run package
+```
+
+## 配置
+
+首先需要在yao-amis-admin管理端配置一个名称为myblog的博客网站
+
+博客访问地址配置：http://localhost:5099/api/v1/blog/web/myblog
+
+安装插件后，在左侧会出现一个新的图标。在左边可以配置博客网站地址，用户名，密码。
 
 ## Extension Settings
 
